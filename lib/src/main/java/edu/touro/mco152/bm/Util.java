@@ -1,4 +1,4 @@
-package java;
+package edu.touro.mco152.bm;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -109,7 +109,7 @@ public class Util {
      */
     public static String getModelFromLetter2(String driveLetter) {
         try {
-            Process p = Runtime.getRuntime().exec("powershell -ExecutionPolicy ByPass -File disk-model.ps1");
+            Process p = Runtime.getRuntime().exec(new String[]{"powershell", "-ExecutionPolicy", "ByPass", "-File", "disk-model.ps1"});
             p.waitFor(3, TimeUnit.SECONDS);
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
