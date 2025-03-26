@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 /**
  * Primary class for global variables, main and common methods.
  */
-public class App {
+public class App{
 
     public static final String APP_CACHE_DIR = System.getProperty("user.home") + File.separator + ".jDiskMark";
     public static final String PROPERTIESFILE = "jdm.properties";
@@ -240,7 +240,7 @@ public class App {
             msg("worker is null abort...");
             return;
         }
-        worker.cancel(true);
+        worker.diskWorker.cancelUp(true);
     }
 
     public static void startBenchmark() {
@@ -263,8 +263,9 @@ public class App {
         Gui.mainFrame.adjustSensitivity();
 
         //4. set up disk worker thread and its event handlers
-        worker = new DiskWorker();
-        worker.addPropertyChangeListener((final PropertyChangeEvent event) -> {
+        SwingUI swing = new SwingUI();
+        DiskWorker worker = new DiskWorker(swing);
+        worker.diskWorker.addPropertyChangeListener((final PropertyChangeEvent event) -> {
             switch (event.getPropertyName()) {
                 case "progress":
                     int value = (Integer) event.getNewValue();
@@ -285,7 +286,7 @@ public class App {
         });
 
         //5. start the Swing worker thread
-        worker.execute();
+        worker.diskWorker.startProgram();
     }
 
     /**
