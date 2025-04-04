@@ -374,6 +374,12 @@ public class App{
     }
 
     static public void resetSequence() {
+        try {
+            // Make the method sleep for 5 seconds
+            Thread.sleep(5000);  // 5000 milliseconds = 5 seconds
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         nextMarkNumber = 1;
     }
 

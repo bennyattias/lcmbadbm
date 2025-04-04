@@ -92,4 +92,9 @@ class AbstractDiskWorkerTest implements AbstractDiskWorker{
     public void addPropertyChangeListener(PropertyChangeListener listener) {
 
     }
+
+    @Override
+    public boolean cancelUp(boolean mayInterruptIfRunning) {
+        return false;
+    }
 }
