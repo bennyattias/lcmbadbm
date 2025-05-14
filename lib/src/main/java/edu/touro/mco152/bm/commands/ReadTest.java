@@ -1,5 +1,9 @@
-package edu.touro.mco152.bm;
+package edu.touro.mco152.bm.commands;
 
+import edu.touro.mco152.bm.AbstractDiskWorker;
+import edu.touro.mco152.bm.App;
+import edu.touro.mco152.bm.DiskMark;
+import edu.touro.mco152.bm.Util;
 import edu.touro.mco152.bm.persist.DiskRun;
 import edu.touro.mco152.bm.persist.EM;
 import edu.touro.mco152.bm.ui.Gui;
@@ -17,16 +21,19 @@ import java.util.logging.Logger;
 import static edu.touro.mco152.bm.App.*;
 import static edu.touro.mco152.bm.DiskMark.MarkType.READ;
 
-public class ReadTest {
+public class ReadTest implements Command {
     // declare local vars formerly in DiskWorker
     AbstractDiskWorker diskWorker;
+    DiskRun.BlockSequence blockSeq;
+    int numOfMarks;
+    int numOfBlocks;
+    int blockSizeKb;
+    int unitsTotal;
+
     int wUnitsComplete = 0,
             rUnitsComplete = 0,
             unitsComplete;
 
-    int wUnitsTotal = App.writeTest ? numOfBlocks * numOfMarks : 0;
-    int rUnitsTotal = App.readTest ? numOfBlocks * numOfMarks : 0;
-    int unitsTotal = wUnitsTotal + rUnitsTotal;
     float percentComplete;
 
     int blockSize = blockSizeKb*KILOBYTE;
@@ -35,8 +42,13 @@ public class ReadTest {
     DiskMark rMark;
     int startFileNum = App.nextMarkNumber;
 
-    public ReadTest(AbstractDiskWorker worker) {
+    public ReadTest(AbstractDiskWorker worker, DiskRun.BlockSequence blockSeq, int numOfMarks, int numOfBlocks, int blockSizeKb) {
         this.diskWorker = worker;
+        this.blockSeq = blockSeq;
+        this.numOfMarks = numOfMarks;
+        this.numOfBlocks = numOfBlocks;
+        this.blockSizeKb = blockSizeKb;
+        this.unitsTotal = numOfBlocks * numOfMarks;
 
         for (int b=0; b<blockArr.length; b++) {
             if (b%2==0) {
@@ -45,11 +57,11 @@ public class ReadTest {
         }
     }
 
-    public boolean read() throws IOException {
-        DiskRun run = new DiskRun(DiskRun.IOMode.READ, App.blockSequence);
-        run.setNumMarks(App.numOfMarks);
-        run.setNumBlocks(App.numOfBlocks);
-        run.setBlockSize(App.blockSizeKb);
+    public void execute() {
+        DiskRun run = new DiskRun(DiskRun.IOMode.READ, blockSequence);
+        run.setNumMarks(numOfMarks);
+        run.setNumBlocks(numOfBlocks);
+        run.setBlockSize(blockSizeKb);
         run.setTxSize(App.targetTxSizeKb());
         run.setDiskInfo(Util.getDiskInfo(dataDir));
 
@@ -72,7 +84,7 @@ public class ReadTest {
             try {
                 try (RandomAccessFile rAccFile = new RandomAccessFile(testFile, "r")) {
                     for (int b = 0; b < numOfBlocks; b++) {
-                        if (App.blockSequence == DiskRun.BlockSequence.RANDOM) {
+                        if (blockSeq == DiskRun.BlockSequence.RANDOM) {
                             int rLoc = Util.randInt(0, numOfBlocks - 1);
                             rAccFile.seek((long) rLoc * blockSize);
                         } else {
@@ -92,7 +104,10 @@ public class ReadTest {
                         ex.getMessage();
                 JOptionPane.showMessageDialog(Gui.mainFrame, emsg, "Unable to READ", JOptionPane.ERROR_MESSAGE);
                 msg(emsg);
-                return false;
+                //return false;
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
             }
             long endTime = System.nanoTime();
             long elapsedTimeNs = endTime - startTime;
@@ -119,6 +134,6 @@ public class ReadTest {
         em.getTransaction().commit();
 
         Gui.runPanel.addRun(run);
-        return false;
+        //return true;
     }
 }
