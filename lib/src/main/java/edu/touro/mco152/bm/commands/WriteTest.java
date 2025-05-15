@@ -20,6 +20,9 @@ import static edu.touro.mco152.bm.App.*;
 import static edu.touro.mco152.bm.App.msg;
 import static edu.touro.mco152.bm.DiskMark.MarkType.WRITE;
 
+/**
+ * The Write benchmark concrete command
+ */
 public class WriteTest implements Command{
     // declare local vars formerly in DiskWorker
     AbstractDiskWorker diskWorker;
@@ -28,6 +31,9 @@ public class WriteTest implements Command{
     int numOfBlocks;
     int blockSizeKb;
     int unitsTotal;
+
+    //for unit test
+    public boolean passed = false;
 
     int wUnitsComplete = 0,
             rUnitsComplete = 0,
@@ -157,6 +163,7 @@ public class WriteTest implements Command{
         em.getTransaction().commit();
 
         Gui.runPanel.addRun(run);
+        passed = true;
     }
 
 }

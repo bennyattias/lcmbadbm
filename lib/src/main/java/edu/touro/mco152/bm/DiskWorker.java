@@ -27,6 +27,10 @@ import static edu.touro.mco152.bm.App.*;
  * To be Swing compliant this class extends SwingWorker and declares that its final return (when
  * doInBackground() is finished) is of type Boolean, and declares that intermediate results are communicated to
  * Swing using an instance of the DiskMark class.
+ * <p>
+ * In the command pattern, this class id the Client that sets up the executor which takes in concrete commands
+ * and calls their execute() method
+ * </p>
  */
 
 public class DiskWorker {
