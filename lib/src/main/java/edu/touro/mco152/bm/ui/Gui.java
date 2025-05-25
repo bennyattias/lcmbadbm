@@ -2,6 +2,8 @@ package edu.touro.mco152.bm.ui;
 
 import edu.touro.mco152.bm.App;
 import edu.touro.mco152.bm.DiskMark;
+import edu.touro.mco152.bm.Observer;
+import edu.touro.mco152.bm.persist.DiskRun;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -20,7 +22,7 @@ import java.text.NumberFormat;
  * Creates and populates a graph with data from the current run, and
  * stores gui references for easy access.
  */
-public final class Gui {
+public final class Gui implements Observer {
 
     public static ChartPanel chartPanel = null;
     public static MainFrame mainFrame = null;
@@ -30,6 +32,11 @@ public final class Gui {
     public static JFreeChart chart;
     public static JProgressBar progressBar = null;
     public static RunPanel runPanel = null;
+
+    @Override
+    public void update(DiskRun run) {
+        runPanel.addRun(run);
+    }
 
     public static ChartPanel createChartPanel() {
 
@@ -140,4 +147,5 @@ public final class Gui {
         chart.getXYPlot().getRenderer().setSeriesVisibleInLegend(6, App.readTest && App.showMaxMin);
         chart.getXYPlot().getRenderer().setSeriesVisibleInLegend(7, App.readTest && App.showMaxMin);
     }
+
 }
