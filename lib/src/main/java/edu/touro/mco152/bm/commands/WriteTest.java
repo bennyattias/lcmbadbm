@@ -23,7 +23,9 @@ import static edu.touro.mco152.bm.DiskMark.MarkType.WRITE;
 /**
  * The Write benchmark concrete command
  */
-public class WriteTest implements Command{
+public class WriteTest extends BaseSubject implements Command{
+    //Store DiskRun for Observer notification
+    DiskRun run = null;
     // declare local vars formerly in DiskWorker
     AbstractDiskWorker diskWorker;
     DiskRun.BlockSequence blockSeq;
@@ -66,6 +68,7 @@ public class WriteTest implements Command{
 
     public void execute() {
         DiskRun run = new DiskRun(DiskRun.IOMode.WRITE, blockSeq);
+        this.run = run;
         run.setNumMarks(numOfMarks);
         run.setNumBlocks(numOfBlocks);
         run.setBlockSize(blockSizeKb);
@@ -154,16 +157,20 @@ public class WriteTest implements Command{
             run.setEndTime(new Date());
         } // END outer loop for specified duration (number of 'marks') for WRITE benchmark
 
-            /*
-              Persist info about the Write BM Run (e.g. into Derby Database) and add it to a GUI panel
-             */
-        EntityManager em = EM.getEntityManager();
-        em.getTransaction().begin();
-        em.persist(run);
-        em.getTransaction().commit();
-
-        Gui.runPanel.addRun(run);
+//            /*
+//              Persist info about the Write BM Run (e.g. into Derby Database) and add it to a GUI panel
+//             */
+//        EntityManager em = EM.getEntityManager();
+//        em.getTransaction().begin();
+//        em.persist(run);
+//        em.getTransaction().commit();
+//
+//        Gui.runPanel.addRun(run);
         passed = true;
+    }
+
+    public DiskRun getRun(){
+        return this.run;
     }
 
 }

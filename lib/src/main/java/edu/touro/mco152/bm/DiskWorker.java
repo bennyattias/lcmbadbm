@@ -3,6 +3,8 @@ package edu.touro.mco152.bm;
 import edu.touro.mco152.bm.commands.Executor;
 import edu.touro.mco152.bm.commands.ReadTest;
 import edu.touro.mco152.bm.commands.WriteTest;
+import edu.touro.mco152.bm.externalsys.SlackObserver;
+import edu.touro.mco152.bm.persist.DatabaseObserver;
 import edu.touro.mco152.bm.ui.Gui;
 
 import javax.swing.*;
@@ -31,6 +33,8 @@ import static edu.touro.mco152.bm.App.*;
  * In the command pattern, this class id the Client that sets up the executor which takes in concrete commands
  * and calls their execute() method
  * </p>
+ * In the Observer pattern, this class is the client that sets up the subject(s),
+ * adds observers to the subject's list, and calls the subject's notifyObservers method.
  */
 
 public class DiskWorker {
@@ -94,6 +98,12 @@ public class DiskWorker {
             WriteTest writeTest1 = new WriteTest(diskWorker, blockSequence, numOfMarks, numOfBlocks, blockSizeKb);
             executor.setCommand(writeTest1);
             executor.runTest();
+
+            //Register observers to the Subject's list and notify them
+            writeTest1.registerObserver(new DatabaseObserver());
+            writeTest1.registerObserver(new Gui());
+            writeTest1.registerObserver(new SlackObserver());
+            writeTest1.notifyObservers(writeTest1.getRun());
         }
 
         /*
@@ -119,6 +129,12 @@ public class DiskWorker {
             ReadTest readTest1 = new ReadTest(diskWorker, blockSequence, numOfMarks, numOfBlocks, blockSizeKb);
             executor.setCommand(readTest1);
             executor.runTest();
+
+            //Register observers to the Subject's list and notify them
+            readTest1.registerObserver(new DatabaseObserver());
+            readTest1.registerObserver(new Gui());
+            readTest1.registerObserver(new SlackObserver());
+            readTest1.notifyObservers(readTest1.getRun());
         }
         App.nextMarkNumber += App.numOfMarks;
         return true;
