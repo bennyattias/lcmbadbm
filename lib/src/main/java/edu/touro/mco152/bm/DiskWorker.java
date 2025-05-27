@@ -3,6 +3,7 @@ package edu.touro.mco152.bm;
 import edu.touro.mco152.bm.commands.Executor;
 import edu.touro.mco152.bm.commands.ReadTest;
 import edu.touro.mco152.bm.commands.WriteTest;
+import edu.touro.mco152.bm.externalsys.SlackObserver;
 import edu.touro.mco152.bm.persist.DatabaseObserver;
 import edu.touro.mco152.bm.ui.Gui;
 
@@ -101,7 +102,7 @@ public class DiskWorker {
             //Register observers to the Subject's list and notify them
             writeTest1.registerObserver(new DatabaseObserver());
             writeTest1.registerObserver(new Gui());
-            //TODO add Slack Observer
+            writeTest1.registerObserver(new SlackObserver());
             writeTest1.notifyObservers(writeTest1.getRun());
         }
 
@@ -132,7 +133,7 @@ public class DiskWorker {
             //Register observers to the Subject's list and notify them
             readTest1.registerObserver(new DatabaseObserver());
             readTest1.registerObserver(new Gui());
-            //TODO add Slack Observer
+            readTest1.registerObserver(new SlackObserver());
             readTest1.notifyObservers(readTest1.getRun());
         }
         App.nextMarkNumber += App.numOfMarks;
